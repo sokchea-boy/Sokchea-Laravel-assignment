@@ -4,92 +4,94 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class AuthorsController extends Controller
+class UserController extends Controller
 {
-     public $AuthorsOpject = [
+      public $UserOpject = [
         [
             'id' =>'01',
             'name'=> 'Sokchea boy',
-            'bio'=>'A passionate web developer from Cambodia.',
-            'nationality'=> 'khmer in cambodia'
+            'email'=>'sokchea@example.com',
+            'membershipDate'=> '2025-Junly-Monday'
         ],
         [
             'id' =>'02',
-            'name'=> 'Kin ',
-            'bio'=>'A passionate web developer from Cambodia.',
-            'nationality'=> 'khmer in cambodia'
+            'name'=> 'Chandy',
+            'email'=>'chandy@example.com',
+            'membershipDate'=> '2025-Junly-Monday'
         ]
     ];
     /**
      * Display a listing of the resource.
      */
-    public function index()
+     public function index()
     {
             return response()->json([
                 'message'=> 'reques successfully',
-                'data'=> $this->AuthorsOpject
+                'data'=> $this->UserOpject
             ], 200);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    
     public function create(Request $request)
     {
-        $newAuthors = [
+        $newUser = [
             'id' =>$request -> id,
             'name'=> $request -> name,
-            'bio'=> $request -> bio,
-            'nationality'=> $request -> nationality
+            'email'=> $request -> email,
+            'membershipDate'=> $request -> membershipDate
         ];
         return response()->json([
             'message'=> 'created successfully',
-            'data'=> $newAuthors
+            'data'=> $newUser
         ],200);
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+     public function store(Request $request)
     {
-        $newAuthore = [
+        $newUser = [
             'id' => $request -> id,
             'name' => $request -> name,
-            'bio' => $request -> bio,
-            'nationality' => $request -> nationality
+            'email'=> $request -> email,
+            'membershipDate'=> $request -> membershipDate
         ];
 
-        $this -> AuthorsOpject [] = $newAuthore;
+        $this -> UserOpject [] = $newUser;
         return response()-> json([
             'message' => 'stored successfully',
-            'data' => $newAuthore
+            'data' => $newUser
         ],201);
     }
+
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $authores = null;
-        foreach($this->AuthorsOpject as $item){
+        $user = null;
+        foreach($this->UserOpject as $item){
             if ($item['id'] === $id){
-                $authores = $item;
+                $user = $item;
                 break;
             }
         }
-        if(!$authores){
+        if(!$user){
             return response()-> json([
                 'message' => 'Authore not found'
             ], 404);
         }
         return response() ->  json([
             'message' => 'Authore found',
-            'data' => $authores
+            'data' => $user
         ],200);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -97,7 +99,7 @@ class AuthorsController extends Controller
     public function edit(string $id, Request $request)
     {
         $index = null;
-        foreach($this->AuthorsOpject as $key => $item){
+        foreach($this->UserOpject as $key => $item){
             if($item['id'] === $id){
                 $index = $key;
             }
@@ -108,28 +110,28 @@ class AuthorsController extends Controller
             ],404);
         }
 
-        $updateAuthores = $request -> only([
+        $updateUser = $request -> only([
             'id',
             'name',
-            'bio',
-            'nationality',
+            'email',
+            'membershipDate',
         ]);
 
-        $this->AuthorsOpject [] = $updateAuthores;
+        $this->UserOpject [] = $updateUser;
         return response()-> json([
             'message' => 'update successfully',
-            'data' => $updateAuthores
+            'data' => $updateUser
         ],200);
         
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Update the specified resource in storage.
      */
     public function delete(string $id)
     {
         $index = null;
-        foreach ($this-> AuthorsOpject as $key => $item){
+        foreach ($this-> UserOpject as $key => $item){
             if($item['id'] === $id){
                 $index = $key;
                 break;
@@ -146,4 +148,11 @@ class AuthorsController extends Controller
         ], 200);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
 }
