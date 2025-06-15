@@ -36,15 +36,49 @@ class BooksController extends Controller
             'data' => $this->BookObject
         ], 200);
     }
+      /**
+     * Store a newly created resource in storage (alias for store).
+     */
+    public function create( Request $request){
+          $newBook = [
+            'id' => $request->id,
+            'title' => $request->title,
+            'author' => $request->author,
+            'isbn' => $request->isbn,
+            'publicationYear' => $request->publicationYear,
+            'genre' => $request->genre,
+            'availableCopies' => $request->availableCopies
+        ];
+
+        return response()->json([
+            'message' => 'successfully created',
+            'data'=> $newBook
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+   public function store(Request $request)
     {
+
+        // Create new book
+        $newBook = [
+            'id' => $request->id,
+            'title' => $request->title,
+            'author' => $request->author,
+            'isbn' => $request->isbn,
+            'publicationYear' => $request->publicationYear,
+            'genre' => $request->genre,
+            'availableCopies' => $request->availableCopies
+        ];
+
+        $this->BookObject[] = $newBook;
+
         return response()->json([
-            'message' => 'Not implemented'
-        ], 501);
+            'message' => 'Successfully created',
+            'data' => $newBook
+        ], 201);
     }
 
     /**
@@ -71,15 +105,7 @@ class BooksController extends Controller
             'data' => $book
         ], 200);
     }
-     /**
-     * Store a newly created resource in storage (alias for store).
-     */
-    public function create( Request $request){
-        return response()->json([
-            'message' => 'successfully created',
-            'data'=> $this->store($request)
-        ]);
-    }
+   
 
     /**
      * Update the specified resource in storage.
@@ -91,6 +117,12 @@ class BooksController extends Controller
             if ($item['id'] === $id){
                 $index = $key;
             }
+        }
+         // Check if book exists
+        if ($index === null) {
+            return response()->json([
+                'message' => 'Book not found'
+            ], 404);
         }
         $updatedBook = array_merge($this->BookObject[$index], $request->only([
             'title',
