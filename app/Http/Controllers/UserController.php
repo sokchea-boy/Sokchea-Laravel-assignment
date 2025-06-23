@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\Users;
 use Illuminate\Http\Request;
 
@@ -23,13 +24,10 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(StoreUserRequest $request)
     {
-        $newUser = Users::create( [
-            'name'=> $request -> name,
-            'email'=> $request -> email,
-            'membershipDate'=> $request -> membershipDate
-        ]);
+        $newUser = Users::create($request -> all());
+
         return response()->json([
             'message'=> 'created successfully',
             'data'=> $newUser
@@ -56,16 +54,12 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function edit(string $id, Request $request)
+    public function edit( StoreUserRequest $request, $id)
     {
         $newUser = Users::find($id);
-        $newUser -> update([
-            'name'=> $request-> name,
-            'email'=> $request -> email,
-            'membershipDate'=> $request ->membershipDate
-        ]);
+        $newUser -> update($request ->validated());
 
-        if ($newUser === null){
+        if (!$newUser){
             return response() ->json([
                 'message' => 'authore not found',
             ],404);

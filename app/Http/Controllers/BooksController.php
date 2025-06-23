@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBookRequest;
 use Illuminate\Http\Request;
 use App\Models\Book;
 
@@ -21,20 +22,14 @@ class BooksController extends Controller
       /**
      * Store a newly created resource in storage (alias for store).
      */
-    public function create( Request $request){
-          $newBook = Book::create([
-            'title' => $request->title,
-            'author' => $request->author,
-            'isbn' => $request->isbn,
-            'publicationYear' => $request->publicationYear,
-            'genre' => $request->genre,
-            'availableCopies' => $request->availableCopies
-        ]);
+    public function create( StoreBookRequest $request){
+            $newBook = Book::create($request -> all());
 
-        return response()->json([
-            'message' => 'successfully created',
-            'data'=> $newBook
+            return response()->json([
+                'message' => 'successfully created',
+                'data'=> $newBook
         ],200);
+
     }
 
     
@@ -62,25 +57,26 @@ class BooksController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function edit( Request $request, $id)
-    {
-       $newBook = Book::find($id);
-       
-       $newBook->update([
-             'id' => $request->id,
-            'title' => $request->title,
-            'author' => $request->author,
-            'isbn' => $request->isbn,
-            'publicationYear' => $request->publicationYear,
-            'genre' => $request->genre,
-            'availableCopies' => $request->availableCopies
-       ]);
+   public function edit(StoreBookRequest $request, $id)
+{
+    $book = Book::find($id);
 
-       return response()->json([
-        'message' => 'Book update successfully',
-        'data' => $newBook,
-       ],200);
+    if (!$book) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Book not found',
+        ], 404);
     }
+
+    // Update the book with only validated input
+    $book->update($request->validated());
+
+    return response()->json([
+        'message' => 'Book updated successfully',
+        'data' => $book,    
+    ], 200);
+}
+
 
     /**
      * Remove the specified resource from storage.
