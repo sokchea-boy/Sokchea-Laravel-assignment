@@ -34,7 +34,7 @@ class BooksController extends Controller
         return response()->json([
             'message' => 'successfully created',
             'data'=> $newBook
-        ]);
+        ],200);
     }
 
     

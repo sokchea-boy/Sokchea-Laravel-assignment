@@ -2,33 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Users;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-      public $UserOpject = [
-        [
-            'id' =>'01',
-            'name'=> 'Sokchea boy',
-            'email'=>'sokchea@example.com',
-            'membershipDate'=> '2025-Junly-Monday'
-        ],
-        [
-            'id' =>'02',
-            'name'=> 'Chandy',
-            'email'=>'chandy@example.com',
-            'membershipDate'=> '2025-Junly-Monday'
-        ]
-    ];
+
     /**
      * Display a listing of the resource.
      */
      public function index()
     {
-            return response()->json([
-                'message'=> 'reques successfully',
-                'data'=> $this->UserOpject
-            ], 200);
+       return response()->json([
+            'message'=> 'get user successfully',
+            'data'=>Users::all()
+       ],200);
+
     }
 
     /**
@@ -36,51 +25,23 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $newUser = [
-            'id' =>$request -> id,
+        $newUser = Users::create( [
             'name'=> $request -> name,
             'email'=> $request -> email,
             'membershipDate'=> $request -> membershipDate
-        ];
+        ]);
         return response()->json([
             'message'=> 'created successfully',
             'data'=> $newUser
         ],200);
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
-     public function store(Request $request)
-    {
-        $newUser = [
-            'id' => $request -> id,
-            'name' => $request -> name,
-            'email'=> $request -> email,
-            'membershipDate'=> $request -> membershipDate
-        ];
-
-        $this -> UserOpject [] = $newUser;
-        return response()-> json([
-            'message' => 'stored successfully',
-            'data' => $newUser
-        ],201);
-    }
-
-
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $user = null;
-        foreach($this->UserOpject as $item){
-            if ($item['id'] === $id){
-                $user = $item;
-                break;
-            }
-        }
+       $user = Users::find($id);
         if(!$user){
             return response()-> json([
                 'message' => 'Authore not found'
@@ -92,67 +53,49 @@ class UserController extends Controller
         ],200);
     }
 
-
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified resource in storage.
      */
     public function edit(string $id, Request $request)
     {
-        $index = null;
-        foreach($this->UserOpject as $key => $item){
-            if($item['id'] === $id){
-                $index = $key;
-            }
-        }
-        if ($index === null){
+        $newUser = Users::find($id);
+        $newUser -> update([
+            'name'=> $request-> name,
+            'email'=> $request -> email,
+            'membershipDate'=> $request ->membershipDate
+        ]);
+
+        if ($newUser === null){
             return response() ->json([
                 'message' => 'authore not found',
             ],404);
         }
 
-        $updateUser = $request -> only([
-            'id',
-            'name',
-            'email',
-            'membershipDate',
-        ]);
-
-        $this->UserOpject [] = $updateUser;
         return response()-> json([
             'message' => 'update successfully',
-            'data' => $updateUser
+            'data' => $newUser
         ],200);
         
     }
 
-    /**
-     * Update the specified resource in storage.
+     /**
+     * Remove the specified resource from storage.
      */
-    public function delete(string $id)
+    public function delete(string $id, Request $request)
     {
-        $index = null;
-        foreach ($this-> UserOpject as $key => $item){
-            if($item['id'] === $id){
-                $index = $key;
-                break;
-            }
-        }
-        if ($index === null){
+        $user = Users::find($id);
+        $user -> delete();
+        if (!$user){
             return response()->json([
                 'message' => 'authore not found'
                 
             ],404);
+        }else{
+            return response()-> json([
+                'message' => ' delet succeessfully',
+            ], 200);
         }
-        return response()-> json([
-            'message' => ' delet succeessfully',
-        ], 200);
-    }
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+   
 }
