@@ -22,8 +22,8 @@ class StoreBookRequest extends FormRequest
     response()->json([
                 'success' => false,
                 'message'=> $validator->errors()
-    ],412)
-            );
+         ],412)
+        );
     }
 
     /**
@@ -32,15 +32,15 @@ class StoreBookRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
-        return [
+{
+    return [
         'title' => 'required|string|min:2|max:125',
-        'author' => 'required|string|min:2|max:250',
+        'author_id' => 'required|exists:authors,id',
         'isbn' => 'required|string|min:2|max:225',
-        'publicationYear' => 'required|integer',
+        'publicationYear' => 'required|integer|min:4|max:' . date('Y'),
         'genre' => 'required|string|min:2|max:225',
-        'availableCopies' => 'required|integer',
-];
+        'availableCopies' => 'required|integer|min:0',
+    ];
+}
 
-    }
 }

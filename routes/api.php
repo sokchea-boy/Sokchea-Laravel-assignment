@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\BookController;
 use App\Http\Controllers\AuthorsController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\UserController;
@@ -44,3 +45,10 @@ Route::prefix("/users")->group(function(){
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::prefix('v1')->group(function (){
+    
+    Route::apiResource('/books', BookController::class);
+});
+

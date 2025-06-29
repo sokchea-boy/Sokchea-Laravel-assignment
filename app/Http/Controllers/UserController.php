@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Models\User;
 use App\Models\Users;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
@@ -24,14 +26,26 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(StoreUserRequest $request)
-    {
-        $newUser = Users::create($request -> all());
+    // public function create(StoreUserRequest $request)
+    // {
+    //     $newUser = Users::create($request -> all());
 
+    //     return response()->json([
+    //         'message'=> 'created successfully',
+    //         'data'=> $newUser
+    //     ],200);
+    // }
+    public function store( $request, $id) {
+        $user = new Users();
+        $user->name = $request->name;
+        $user->email = $request->eamil;
+        $user->membershipDate = $request->membershipDate;
+        $user->save();
         return response()->json([
-            'message'=> 'created successfully',
-            'data'=> $newUser
-        ],200);
+            'status' =>'create user success',
+            'user'=>$user
+        ]);
+         
     }
 
     /**
@@ -47,7 +61,7 @@ class UserController extends Controller
         }
         return response() ->  json([
             'message' => 'Authore found',
-            'data' => $user
+            'data' => new UserResource ($user)
         ],200);
     }
 

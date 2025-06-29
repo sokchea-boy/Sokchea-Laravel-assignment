@@ -23,7 +23,7 @@ class BooksController extends Controller
      * Store a newly created resource in storage (alias for store).
      */
     public function create( StoreBookRequest $request){
-            $newBook = Book::create($request -> all());
+            $newBook = Book::create($request -> validated());
 
             return response()->json([
                 'message' => 'successfully created',
@@ -40,7 +40,7 @@ class BooksController extends Controller
     public function show( $id)
     {
 
-        $book = Book::find($id);
+        $book = Book:: with('author') -> find($id);
 
         if (!$book){
             return response()->json([
@@ -83,9 +83,13 @@ class BooksController extends Controller
      */
     public function delete($id)
     {
-       $Book = Book::where($id);
-       $Book->delete();
-       
+       $book = Book::find($id);
+        if (!$book) {
+            return response()->json([
+                'message' => 'Book not found'
+            ], 404);
+        }
+        $book->delete();
 
         return response()->json([
             'message' => 'Delete successfully'

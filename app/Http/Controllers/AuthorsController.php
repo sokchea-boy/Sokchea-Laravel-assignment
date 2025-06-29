@@ -1,25 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\StoreAuthorRequest;
+use App\Models\Author;
 use Illuminate\Http\Request;
 
 class AuthorsController extends Controller
 {
-     public $AuthorsOpject = [
-        [
-            'id' =>'01',
-            'name'=> 'Sokchea boy',
-            'bio'=>'A passionate web developer from Cambodia.',
-            'nationality'=> 'khmer in cambodia'
-        ],
-        [
-            'id' =>'02',
-            'name'=> 'Kin ',
-            'bio'=>'A passionate web developer from Cambodia.',
-            'nationality'=> 'khmer in cambodia'
-        ]
-    ];
+
     /**
      * Display a listing of the resource.
      */
@@ -27,7 +15,7 @@ class AuthorsController extends Controller
     {
             return response()->json([
                 'message'=> 'reques successfully',
-                'data'=> $this->AuthorsOpject
+                'data'=> Author::all()
             ], 200);
     }
 
@@ -35,14 +23,9 @@ class AuthorsController extends Controller
      * Show the form for creating a new resource.
      */
     
-    public function create(Request $request)
+    public function create(StoreAuthorRequest $request)
     {
-        $newAuthors = [
-            'id' =>$request -> id,
-            'name'=> $request -> name,
-            'bio'=> $request -> bio,
-            'nationality'=> $request -> nationality
-        ];
+        $newAuthors = Author::create($request -> validated());
         return response()->json([
             'message'=> 'created successfully',
             'data'=> $newAuthors
@@ -50,36 +33,12 @@ class AuthorsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $newAuthore = [
-            'id' => $request -> id,
-            'name' => $request -> name,
-            'bio' => $request -> bio,
-            'nationality' => $request -> nationality
-        ];
-
-        $this -> AuthorsOpject [] = $newAuthore;
-        return response()-> json([
-            'message' => 'stored successfully',
-            'data' => $newAuthore
-        ],201);
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $authores = null;
-        foreach($this->AuthorsOpject as $item){
-            if ($item['id'] === $id){
-                $authores = $item;
-                break;
-            }
-        }
+        $authores = Author:: with('books') -> find($id);
+      
         if(!$authores){
             return response()-> json([
                 'message' => 'Authore not found'
@@ -94,28 +53,18 @@ class AuthorsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id, Request $request)
+    public function edit( StoreAuthorRequest $request, $id )
     {
-        $index = null;
-        foreach($this->AuthorsOpject as $key => $item){
-            if($item['id'] === $id){
-                $index = $key;
-            }
-        }
-        if ($index === null){
+        $updateAuthores = Author::find($id);
+      
+        if (!$updateAuthores){
             return response() ->json([
+                'success' => false,
                 'message' => 'authore not found',
             ],404);
         }
 
-        $updateAuthores = $request -> only([
-            'id',
-            'name',
-            'bio',
-            'nationality',
-        ]);
-
-        $this->AuthorsOpject [] = $updateAuthores;
+     $updateAuthores -> update( $request-> validated());
         return response()-> json([
             'message' => 'update successfully',
             'data' => $updateAuthores
@@ -126,21 +75,11 @@ class AuthorsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(string $id)
+    public function delete( $id)
     {
-        $index = null;
-        foreach ($this-> AuthorsOpject as $key => $item){
-            if($item['id'] === $id){
-                $index = $key;
-                break;
-            }
-        }
-        if ($index === null){
-            return response()->json([
-                'message' => 'authore not found'
-                
-            ],404);
-        }
+         $Author = Author::where($id);
+         $Author -> delete();
+
         return response()-> json([
             'message' => ' delet succeessfully',
         ], 200);
